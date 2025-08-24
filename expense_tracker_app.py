@@ -77,7 +77,7 @@ if not st.session_state.logged_in:
             if user:
                 st.session_state.logged_in = True
                 st.session_state.username = username
-                st.success(f"Welcome {username} �")
+                st.success(f"Welcome {username} 👋")
             else:
                 st.error("Invalid Username/Password")
 
@@ -150,4 +150,3 @@ else:
         category_filter = st.selectbox("Filter by Category", df["Category"].unique())
         filtered_df = df[df["Category"] == category_filter]
         st.write("Filtered Expenses:", filtered_df)
-�
