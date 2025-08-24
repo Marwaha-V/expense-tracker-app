@@ -1,4 +1,3 @@
-
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -128,11 +127,10 @@ else:
         st.subheader("📈 Expense Analysis")
         st.bar_chart(df.groupby("Category")["Amount"].sum())
 
-        # Pie chart for category split
+        # Pie chart for category split - Replaced with a bar chart for compatibility
         st.subheader("📊 Category Distribution")
-        # Use Streamlit's native pie chart which doesn't require external libraries
-        category_amounts = df.groupby("Category")["Amount"].sum().reset_index(name='Amount')
-        st.pie_chart(category_amounts, names='Category', values='Amount')
+        category_distribution_df = df.groupby("Category")["Amount"].sum().reset_index()
+        st.bar_chart(category_distribution_df, x="Category", y="Amount")
 
         # Line chart for expenses over time
         st.subheader("📅 Spending Over Time")
