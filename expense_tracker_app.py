@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import datetime
+import plotly.express as px
 
 # --- DATABASE SETUP ---
 conn = sqlite3.connect("budget_app.db", check_same_thread=False)
@@ -9,15 +10,15 @@ c = conn.cursor()
 
 # Create tables if not exist
 c.execute('''CREATE TABLE IF NOT EXISTS users (
-                username TEXT PRIMARY KEY, 
+                username TEXT PRIMARY KEY,
                 password TEXT)''')
 
 c.execute('''CREATE TABLE IF NOT EXISTS expenses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                username TEXT, 
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT,
                 name TEXT,
-                category TEXT, 
-                amount REAL, 
+                category TEXT,
+                amount REAL,
                 date TEXT)''')
 conn.commit()
 
@@ -106,12 +107,12 @@ else:
     expenses = get_expenses(st.session_state.username)
     if expenses:
         df = pd.DataFrame(expenses, columns=["ID", "Name", "Category", "Amount", "Date"])
-        
+
         # Display clean table without IDs
         st.dataframe(df.drop(columns=["ID"]), use_container_width=True)
 
         # Delete section below the table
-        delete_id = st.selectbox("Select an expense to delete", df["ID"], 
+        delete_id = st.selectbox("Select an expense to delete", df["ID"],
                                  format_func=lambda x: f"{df.loc[df['ID']==x, 'Name'].values[0]} - ₹{df.loc[df['ID']==x, 'Amount'].values[0]}")
         if st.button("❌ Delete Selected Expense"):
             delete_expense(delete_id)
@@ -123,18 +124,32 @@ else:
         st.metric("Total Spent", f"₹{total_spent}")
         st.metric("Remaining Budget", f"₹{budget - total_spent}")
 
-        # Graph
+        # Graphs
+        st.subheader("📈 Expense Analysis")
         st.bar_chart(df.groupby("Category")["Amount"].sum())
-        
+
+        # Pie chart for category split
+        st.subheader("📊 Category Distribution")
+        # Fix: Use Plotly for an interactive and robust pie chart
+        category_amounts = df.groupby("Category")["Amount"].sum().reset_index()
+        fig = px.pie(category_amounts, values='Amount', names='Category', title='Category Distribution')
+        st.plotly_chart(fig, use_container_width=True)
 
 
+        # Line chart for expenses over time
+        st.subheader("📅 Spending Over Time")
+        df["Date"] = pd.to_datetime(df["Date"])
+        st.line_chart(df.groupby("Date")["Amount"].sum())
 
-    # Logout option
-    if st.sidebar.button("🚪 Logout"):
-        st.session_state.logged_in = False
-        st.session_state.username = ""
-        st.rerun()   # ✅ FIXED
+        # Download button
+        st.download_button(
+            label="⬇️ Download Expenses as CSV",
+            data=df.to_csv(index=False),
+            file_name="expenses.csv",
+            mime="text/csv"
+        )
 
-    st.sidebar.markdown("Developed by Vansh Marwaha for 2nd Year Project")
-
-
+        # Filter by category
+        category_filter = st.selectbox("Filter by Category", df["Category"].unique())
+        filtered_df = df[df["Category"] == category_filter]
+        st.write("Filtered Expenses:", filtered_df)
