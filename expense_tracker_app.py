@@ -125,12 +125,7 @@ else:
 
         # Graph
         st.bar_chart(df.groupby("Category")["Amount"].sum())
-        st.write("Spending Share by Category")
-        st.write((df.groupby("Category")["Amount"].sum() / df["Amount"].sum()) * 100)
-        st.bar_chart(df.groupby("Category")["Amount"].mean())
-        st.write("Top 5 Biggest Expenses")
-        st.table(df.nlargest(5, "Amount"))
-        st.metric("Total Spending", f"${df['Amount'].sum()}")
+        
 
 
 
@@ -141,4 +136,5 @@ else:
         st.rerun()   # ✅ FIXED
 
     st.sidebar.markdown("Developed by Vansh Marwaha for 2nd Year Project")
+
 
