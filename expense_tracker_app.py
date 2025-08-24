@@ -2,7 +2,6 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
 
 # --- DATABASE SETUP ---
 conn = sqlite3.connect("budget_app.db", check_same_thread=False)
@@ -130,13 +129,9 @@ else:
 
         # Pie chart for category split
         st.subheader("📊 Category Distribution")
-        # Correctly plot the pie chart using matplotlib and st.pyplot
+        # Use Streamlit's native pie chart which doesn't require external libraries
         category_amounts = df.groupby("Category")["Amount"].sum()
-        fig, ax = plt.subplots()
-        category_amounts.plot.pie(ax=ax, autopct="%1.1f%%")
-        ax.set_ylabel('') # Hides the 'Amount' label on the y-axis
-        st.pyplot(fig)
-
+        st.pie_chart(category_amounts)
 
         # Line chart for expenses over time
         st.subheader("📅 Spending Over Time")
