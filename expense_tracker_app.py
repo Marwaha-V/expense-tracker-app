@@ -2,7 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import datetime
-import plotly.express as px
+import matplotlib.pyplot as plt
 
 # --- DATABASE SETUP ---
 conn = sqlite3.connect("budget_app.db", check_same_thread=False)
@@ -103,9 +103,9 @@ else:
             st.warning("⚠️ Please enter a valid name and amount")
 
     # Show expense history
-    st.subheader("📊 Your Expenses")
     expenses = get_expenses(st.session_state.username)
     if expenses:
+        st.subheader("📊 Your Expenses")
         df = pd.DataFrame(expenses, columns=["ID", "Name", "Category", "Amount", "Date"])
 
         # Display clean table without IDs
@@ -130,10 +130,12 @@ else:
 
         # Pie chart for category split
         st.subheader("📊 Category Distribution")
-        # Fix: Use Plotly for an interactive and robust pie chart
-        category_amounts = df.groupby("Category")["Amount"].sum().reset_index()
-        fig = px.pie(category_amounts, values='Amount', names='Category', title='Category Distribution')
-        st.plotly_chart(fig, use_container_width=True)
+        # Correctly plot the pie chart using matplotlib and st.pyplot
+        category_amounts = df.groupby("Category")["Amount"].sum()
+        fig, ax = plt.subplots()
+        category_amounts.plot.pie(ax=ax, autopct="%1.1f%%")
+        ax.set_ylabel('') # Hides the 'Amount' label on the y-axis
+        st.pyplot(fig)
 
 
         # Line chart for expenses over time
