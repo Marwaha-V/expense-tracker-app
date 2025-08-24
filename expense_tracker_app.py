@@ -77,7 +77,7 @@ if not st.session_state.logged_in:
             if user:
                 st.session_state.logged_in = True
                 st.session_state.username = username
-                st.success(f"Welcome {username} 👋")
+                st.success(f"Welcome {username} �")
             else:
                 st.error("Invalid Username/Password")
 
@@ -129,6 +129,10 @@ else:
         st.subheader("📈 Expense Analysis")
         st.bar_chart(df.groupby("Category")["Amount"].sum())
 
+        # Area chart for category distribution
+        st.subheader("📊 Category Distribution")
+        st.area_chart(df.groupby("Category")["Amount"].sum())
+
         # Line chart for expenses over time
         st.subheader("📅 Spending Over Time")
         df["Date"] = pd.to_datetime(df["Date"])
@@ -146,3 +150,4 @@ else:
         category_filter = st.selectbox("Filter by Category", df["Category"].unique())
         filtered_df = df[df["Category"] == category_filter]
         st.write("Filtered Expenses:", filtered_df)
+�
