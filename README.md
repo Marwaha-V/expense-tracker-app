@@ -5,6 +5,8 @@
 This is a Streamlit-based Expense Tracker Application built as part of the 2nd-year project at DAV University.
 The app helps users record daily expenses, categorize them, and visualize spending patterns in an interactive dashboard.
 
+✨ [Experience it here]https://budgetrackerbyvm.streamlit.app/
+
 🚀 Features
 
 ➕ Add, edit, and delete expenses
