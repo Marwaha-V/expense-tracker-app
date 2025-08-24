@@ -84,6 +84,8 @@ if not st.session_state.logged_in:
 else:
     # --- MAIN DASHBOARD ---
     st.sidebar.header(f"Welcome, {st.session_state.username}")
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("Developed by Vansh Marwaha for 2nd Year Project")
 
     # Budget input on sidebar
     budget = st.sidebar.number_input("Set your Budget", min_value=0.0, step=100.0)
@@ -127,10 +129,10 @@ else:
         st.subheader("📈 Expense Analysis")
         st.bar_chart(df.groupby("Category")["Amount"].sum())
 
-        # Pie chart for category split - Replaced with a bar chart for compatibility
+        # Pie chart for category split - Replaced with an area chart
         st.subheader("📊 Category Distribution")
-        category_distribution_df = df.groupby("Category")["Amount"].sum().reset_index()
-        st.bar_chart(category_distribution_df, x="Category", y="Amount")
+        category_distribution_df = df.groupby("Category")["Amount"].sum()
+        st.area_chart(category_distribution_df)
 
         # Line chart for expenses over time
         st.subheader("📅 Spending Over Time")
