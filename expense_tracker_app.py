@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import datetime
+import plotly.express as px
 
 # --- DATABASE SETUP ---
 conn = sqlite3.connect("budget_app.db", check_same_thread=False)
@@ -127,17 +128,23 @@ else:
 
         # Graphs
         st.subheader("📈 Expense Analysis")
-        st.bar_chart(df.groupby("Category")["Amount"].sum())
+        # Bar chart with different colors for each category
+        category_amounts = df.groupby("Category")["Amount"].sum().reset_index()
+        fig_bar = px.bar(category_amounts, x="Category", y="Amount", color="Category", title="Expenses by Category")
+        st.plotly_chart(fig_bar, use_container_width=True)
 
-        # Pie chart for category split - Replaced with an area chart
+        # Replaced the Area Chart with a more visually distinct Pie Chart with colors
         st.subheader("📊 Category Distribution")
-        category_distribution_df = df.groupby("Category")["Amount"].sum()
-        st.area_chart(category_distribution_df)
+        fig_pie = px.pie(category_amounts, values='Amount', names='Category', title='Category Distribution')
+        st.plotly_chart(fig_pie, use_container_width=True)
 
-        # Line chart for expenses over time
+        # Line chart for expenses over time with colors
         st.subheader("📅 Spending Over Time")
         df["Date"] = pd.to_datetime(df["Date"])
-        st.line_chart(df.groupby("Date")["Amount"].sum())
+        daily_expenses = df.groupby(df["Date"].dt.date)["Amount"].sum().reset_index()
+        fig_line = px.line(daily_expenses, x="Date", y="Amount", title="Spending Over Time")
+        st.plotly_chart(fig_line, use_container_width=True)
+
 
         # Download button
         st.download_button(
